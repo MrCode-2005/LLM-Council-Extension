@@ -27,7 +27,14 @@
                 "perplexity.ai",
                 "www.perplexity.ai",
                 "grok.com",
-                "x.com"
+                "x.com",
+                "claude.ai",
+                "chat.deepseek.com",
+                "copilot.microsoft.com",
+                "chat.qwen.ai",
+                "chat.qwenlm.ai",
+                "notebooklm.google.com",
+                "aistudio.google.com"
             ],
             "resourceTypes": [
                 "sub_frame",
@@ -109,6 +116,214 @@
         },
         "condition": {
             "urlFilter": "*grok.com*",
+            "resourceTypes": [
+                "sub_frame",
+                "main_frame",
+                "xmlhttprequest",
+                "other"
+            ]
+        }
+    },
+    {
+        "id": 5,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+            "responseHeaders": [
+                {
+                    "header": "X-Frame-Options",
+                    "operation": "remove"
+                },
+                {
+                    "header": "Content-Security-Policy",
+                    "operation": "remove"
+                }
+            ]
+        },
+        "condition": {
+            "urlFilter": "*deepseek*",
+            "resourceTypes": [
+                "sub_frame",
+                "main_frame",
+                "xmlhttprequest",
+                "other"
+            ]
+        }
+    },
+    {
+        "id": 6,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+            "responseHeaders": [
+                {
+                    "header": "X-Frame-Options",
+                    "operation": "remove"
+                },
+                {
+                    "header": "Content-Security-Policy",
+                    "operation": "remove"
+                }
+            ]
+        },
+        "condition": {
+            "urlFilter": "*qwen*",
+            "resourceTypes": [
+                "sub_frame",
+                "main_frame",
+                "xmlhttprequest",
+                "other"
+            ]
+        }
+    },
+    {
+        "id": 7,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+            "responseHeaders": [
+                {
+                    "header": "X-Frame-Options",
+                    "operation": "remove"
+                },
+                {
+                    "header": "Content-Security-Policy",
+                    "operation": "remove"
+                }
+            ]
+        },
+        "condition": {
+            "urlFilter": "*claude*",
+            "resourceTypes": [
+                "sub_frame",
+                "main_frame",
+                "xmlhttprequest",
+                "other"
+            ]
+        }
+    },
+    {
+        "id": 8,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+            "responseHeaders": [
+                {
+                    "header": "X-Frame-Options",
+                    "operation": "remove"
+                },
+                {
+                    "header": "Content-Security-Policy",
+                    "operation": "remove"
+                }
+            ]
+        },
+        "condition": {
+            "urlFilter": "*copilot*",
+            "resourceTypes": [
+                "sub_frame",
+                "main_frame",
+                "xmlhttprequest",
+                "other"
+            ]
+        }
+    },
+    {
+        "id": 9,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+            "responseHeaders": [
+                {
+                    "header": "X-Frame-Options",
+                    "operation": "remove"
+                },
+                {
+                    "header": "Content-Security-Policy",
+                    "operation": "remove"
+                }
+            ]
+        },
+        "condition": {
+            "urlFilter": "*kimi*",
+            "resourceTypes": [
+                "sub_frame",
+                "main_frame",
+                "xmlhttprequest",
+                "other"
+            ]
+        }
+    },
+    {
+        "id": 10,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+            "responseHeaders": [
+                {
+                    "header": "X-Frame-Options",
+                    "operation": "remove"
+                },
+                {
+                    "header": "Content-Security-Policy",
+                    "operation": "remove"
+                }
+            ]
+        },
+        "condition": {
+            "urlFilter": "*mistral.ai*",
+            "resourceTypes": [
+                "sub_frame",
+                "main_frame",
+                "xmlhttprequest",
+                "other"
+            ]
+        }
+    },
+    {
+        "id": 11,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+            "responseHeaders": [
+                {
+                    "header": "X-Frame-Options",
+                    "operation": "remove"
+                },
+                {
+                    "header": "Content-Security-Policy",
+                    "operation": "remove"
+                }
+            ]
+        },
+        "condition": {
+            "urlFilter": "*poe.com*",
+            "resourceTypes": [
+                "sub_frame",
+                "main_frame",
+                "xmlhttprequest",
+                "other"
+            ]
+        }
+    },
+    {
+        "id": 12,
+        "priority": 1,
+        "action": {
+            "type": "modifyHeaders",
+            "responseHeaders": [
+                {
+                    "header": "X-Frame-Options",
+                    "operation": "remove"
+                },
+                {
+                    "header": "Content-Security-Policy",
+                    "operation": "remove"
+                }
+            ]
+        },
+        "condition": {
+            "urlFilter": "*z.ai*",
             "resourceTypes": [
                 "sub_frame",
                 "main_frame",

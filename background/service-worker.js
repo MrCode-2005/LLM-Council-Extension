@@ -28,6 +28,92 @@ chrome.action.onClicked.addListener(async () => {
 
 chrome.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === 'council-keepalive') {
-        console.log('[LLM Council] Keep-alive ping');
+        // Keep-alive ping — no-op
+    }
+});
+
+// ── Keyboard Shortcuts (Commands) ─────────────────────────────────────────────
+
+chrome.commands.onCommand.addListener(async (command) => {
+    if (command === 'open-council') {
+        const dashboardUrl = chrome.runtime.getURL('dashboard/index.html');
+        const tabs = await chrome.tabs.query({});
+        const existing = tabs.find(t => t.url?.startsWith(dashboardUrl));
+
+        if (existing) {
+            await chrome.tabs.update(existing.id, { active: true });
+            await chrome.windows.update(existing.windowId, { focused: true });
+        } else {
+            await chrome.tabs.create({ url: dashboardUrl });
+        }
+    }
+});
+
+// ── Context Menus (Right-Click) ───────────────────────────────────────────────
+
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.contextMenus.create({
+        id: "ask-council",
+        title: "Ask LLM Council",
+        contexts: ["selection"]
+    });
+});
+
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+    if (info.menuItemId === "ask-council" && info.selectionText) {
+        // Save the selected text to storage so the dashboard can pick it up
+        await chrome.storage.local.set({ 'council_pending_prompt': info.selectionText });
+
+        const dashboardUrl = chrome.runtime.getURL('dashboard/index.html');
+        const tabs = await chrome.tabs.query({});
+        const existing = tabs.find(t => t.url?.startsWith(dashboardUrl));
+
+        if (existing) {
+            await chrome.tabs.update(existing.id, { active: true });
+            await chrome.windows.update(existing.windowId, { focused: true });
+        } else {
+            await chrome.tabs.create({ url: dashboardUrl });
+        }
+    }
+});
+
+// ── In-Site Quick Compare Message Listener ────────────────────────────────────
+
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+    if (message.action === 'open_dashboard') {
+        if (message.prompt) {
+            await chrome.storage.local.set({ 'council_pending_prompt': message.prompt });
+        }
+
+        const dashboardUrl = chrome.runtime.getURL('dashboard/index.html');
+        const tabs = await chrome.tabs.query({});
+        const existing = tabs.find(t => t.url?.startsWith(dashboardUrl));
+
+        // Ensure we open a new tab if it's not active, or focus it if it is.
+        if (existing) {
+            await chrome.tabs.update(existing.id, { active: true });
+            await chrome.windows.update(existing.windowId, { focused: true });
+        } else {
+            await chrome.tabs.create({ url: dashboardUrl });
+        }
+    }
+
+    if (message.action === 'open_export') {
+        if (message.data) {
+            await chrome.storage.local.set({ 'council_export_data': message.data });
+        }
+
+        const exportUrl = chrome.runtime.getURL('dashboard/export.html');
+        const tabs = await chrome.tabs.query({});
+        const existing = tabs.find(t => t.url?.startsWith(exportUrl));
+
+        if (existing) {
+            await chrome.tabs.update(existing.id, { active: true });
+            await chrome.windows.update(existing.windowId, { focused: true });
+            // Reload to pick up new data
+            await chrome.tabs.reload(existing.id);
+        } else {
+            await chrome.tabs.create({ url: exportUrl });
+        }
     }
 });
