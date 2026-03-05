@@ -431,7 +431,7 @@
 
         kimi: {
             match: () => /kimi\.(moonshot\.cn|com)/.test(location.hostname),
-            getInput: () => document.querySelector('div[contenteditable="plaintext-only"]') || document.querySelector('div[contenteditable="true"]') || document.querySelector('textarea') || document.querySelector('input'),
+            getInput: () => document.querySelector('.chat-input-editor[role="textbox"]') || document.querySelector('div[contenteditable="plaintext-only"]') || document.querySelector('div[contenteditable="true"]') || document.querySelector('textarea'),
             setPrompt: (el, text) => {
                 el.focus();
                 if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
@@ -442,16 +442,43 @@
                 }
             },
             submit: () => {
-                const btn = document.querySelector('button[aria-label*="Send"]') || document.querySelector('button[data-testid*="send"]') || document.querySelector('.send-button');
+                // Save response count before submission
+                window.__kimi_pre_submit_count = document.querySelectorAll('.markdown, .segment-assistant').length;
+                const btn = document.querySelector('.send-button-container:not(.disabled)') || document.querySelector('button[aria-label*="Send"]') || document.querySelector('button[data-testid*="send"]');
                 if (isButtonReady(btn)) { btn.click(); return true; }
                 return false;
             },
             isComplete: () => {
-                return document.querySelectorAll('.markdown-body, [class*="message"]').length > 0;
+                const preCount = window.__kimi_pre_submit_count || 0;
+                const currentMsgs = document.querySelectorAll('.markdown, .segment-assistant');
+
+                // Must have a new response
+                if (currentMsgs.length <= preCount) return false;
+
+                // Check if still streaming (stop button visible)
+                const stopBtn = document.querySelector('.send-button-container.stop');
+                if (stopBtn) return false;
+
+                // Check for rive animation (loading indicator)
+                const riveLoader = document.querySelector('.rive-container');
+                if (riveLoader) return false;
+
+                // Action buttons (copy, regenerate, share, like, dislike) appear when done
+                const actionBtns = document.querySelectorAll('.icon-button');
+                if (actionBtns.length >= 3) return true;
+
+                // Fallback: response has meaningful content
+                const lastMsg = currentMsgs[currentMsgs.length - 1].innerText?.trim() || '';
+                return lastMsg.length > 20;
             },
             getResponse: () => {
-                const msgs = document.querySelectorAll('.markdown-body, [class*="message"]');
-                return msgs.length ? msgs[msgs.length - 1].innerText.trim() : '';
+                const msgs = document.querySelectorAll('.markdown');
+                if (!msgs.length) {
+                    // Fallback selectors
+                    const fallback = document.querySelectorAll('.segment-assistant .segment-content, [class*="message"]');
+                    return fallback.length ? fallback[fallback.length - 1].innerText.trim() : '';
+                }
+                return msgs[msgs.length - 1].innerText.trim();
             }
         },
 
