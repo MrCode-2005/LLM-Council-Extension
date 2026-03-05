@@ -36,6 +36,86 @@ export const MODELS = {
     matchPatterns: ['grok.com', 'x.com/i/grok'],
     icon: '⚡',
     color: '#1d9bf0'
+  },
+  claude: {
+    id: 'claude',
+    name: 'Claude',
+    url: 'https://claude.ai/new',
+    matchPatterns: ['claude.ai'],
+    icon: '🧠',
+    color: '#D97757'
+  },
+  deepseek: {
+    id: 'deepseek',
+    name: 'DeepSeek',
+    url: 'https://chat.deepseek.com/',
+    matchPatterns: ['chat.deepseek.com'],
+    icon: '🐋',
+    color: '#1B65F3'
+  },
+  copilot: {
+    id: 'copilot',
+    name: 'Copilot',
+    url: 'https://copilot.microsoft.com/',
+    matchPatterns: ['copilot.microsoft.com'],
+    icon: '💡',
+    color: '#1A73E8'
+  },
+  qwen: {
+    id: 'qwen',
+    name: 'Qwen',
+    url: 'https://chat.qwen.ai/',
+    matchPatterns: ['chat.qwen.ai', 'chat.qwenlm.ai'],
+    icon: '🟣',
+    color: '#6c47fb'
+  },
+  notebooklm: {
+    id: 'notebooklm',
+    name: 'NotebookLM',
+    url: 'https://notebooklm.google.com/',
+    matchPatterns: ['notebooklm.google.com'],
+    icon: '📓',
+    color: '#22b8cf'
+  },
+  aistudio: {
+    id: 'aistudio',
+    name: 'AI Studio',
+    url: 'https://aistudio.google.com/app/prompts/new_chat',
+    matchPatterns: ['aistudio.google.com'],
+    icon: '⚙️',
+    color: '#4285f4'
+  },
+  kimi: {
+    id: 'kimi',
+    name: 'Kimi',
+    url: 'https://kimi.com/',
+    matchPatterns: ['kimi.moonshot.cn', 'kimi.com', 'www.kimi.com'],
+    icon: '🌙',
+    color: '#3d3d3d'
+  },
+  mistral: {
+    id: 'mistral',
+    name: 'Mistral',
+    url: 'https://chat.mistral.ai/',
+    matchPatterns: ['chat.mistral.ai'],
+    icon: '🌪️',
+    color: '#f97316'
+  },
+  poe: {
+    id: 'poe',
+    name: 'Poe',
+    url: 'https://poe.com/',
+    matchPatterns: ['poe.com'],
+    icon: '🎭',
+    color: '#7f56d9'
+  },
+  zai: {
+    id: 'zai',
+    name: 'Z.ai',
+    url: 'https://chat.z.ai/',
+    matchPatterns: ['z.ai', 'chat.z.ai'],
+    icon: 'Z',
+    color: '#1a1a1a'
   }
 };
 
@@ -88,7 +168,7 @@ export const DEFAULTS = {
   COUNCIL_TIMEOUT_MS: 120_000,   // 2 minutes per model
   JUDGE_TIMEOUT_MS: 180_000,     // 3 minutes for judge
   MIN_COUNCIL: 2,
-  MAX_COUNCIL: 4,
+  MAX_COUNCIL: 14,
   DEFAULT_JUDGE: 'gemini',       // Gemini is default judge
   JUDGE_MODE: JUDGE_MODE.INCOGNITO,
   POLL_INTERVAL_MS: 2_000,       // DOM polling interval
@@ -102,5 +182,6 @@ export const STORAGE_KEYS = {
   SELECTED_JUDGE: 'selectedJudge',
   JUDGE_ISOLATION_MODE: 'judgeIsolationMode',
   JUDGE_CUSTOM_PROMPT: 'judgeCustomPrompt',
-  LAST_PROMPT: 'lastPrompt'
+  LAST_PROMPT: 'lastPrompt',
+  HISTORY: 'history'
 };
