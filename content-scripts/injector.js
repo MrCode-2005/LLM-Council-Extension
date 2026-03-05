@@ -415,17 +415,40 @@
                 setNativeValue(el, text);
             },
             submit: () => {
-                const btn = document.querySelector('button[aria-label*="Run"]') || document.querySelector('button.run-button');
+                window.__aistudio_pre_submit_count = document.querySelectorAll('ms-text-chunk, .turn-content, .chat-turn-container.model').length;
+                const btn = document.querySelector('button.run-button') || document.querySelector('button[aria-label*="Run"]');
                 if (isButtonReady(btn)) { btn.click(); return true; }
+                // Also try clicking any button whose text includes 'Run'
+                const allBtns = document.querySelectorAll('button');
+                for (const b of allBtns) {
+                    if (b.textContent?.includes('Run') && isButtonReady(b)) { b.click(); return true; }
+                }
                 return false;
             },
             isComplete: () => {
-                const stopBtn = document.querySelector('button[aria-label*="Stop"]');
-                return !stopBtn && document.querySelectorAll('.model-response-content').length > 0;
+                const preCount = window.__aistudio_pre_submit_count || 0;
+                const currentMsgs = document.querySelectorAll('ms-text-chunk, .chat-turn-container.model');
+                if (currentMsgs.length <= preCount) return false;
+
+                // Check if Run button is present (not Stop)
+                const allBtns = document.querySelectorAll('button');
+                const hasStop = Array.from(allBtns).some(b => b.textContent?.includes('Stop'));
+                if (hasStop) return false;
+
+                // Verify response has content
+                const chunks = document.querySelectorAll('ms-text-chunk');
+                if (chunks.length > 0) {
+                    const lastChunk = chunks[chunks.length - 1].innerText?.trim() || '';
+                    return lastChunk.length > 10;
+                }
+                return false;
             },
             getResponse: () => {
-                const msgs = document.querySelectorAll('.model-response-content');
-                return msgs.length ? msgs[msgs.length - 1].innerText.trim() : '';
+                const chunks = document.querySelectorAll('ms-text-chunk');
+                if (chunks.length) return chunks[chunks.length - 1].innerText.trim();
+                // Fallback
+                const turns = document.querySelectorAll('.turn-content');
+                return turns.length ? turns[turns.length - 1].innerText.trim() : '';
             }
         },
 
@@ -458,10 +481,6 @@
                 // Check if still streaming (stop button visible)
                 const stopBtn = document.querySelector('.send-button-container.stop');
                 if (stopBtn) return false;
-
-                // Check for rive animation (loading indicator)
-                const riveLoader = document.querySelector('.rive-container');
-                if (riveLoader) return false;
 
                 // Action buttons (copy, regenerate, share, like, dislike) appear when done
                 const actionBtns = document.querySelectorAll('.icon-button');
