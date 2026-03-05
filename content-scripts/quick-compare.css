@@ -1,0 +1,47 @@
+.llm-council-inline-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: #8951d6;
+    border: 1px solid #8951d6;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 10px;
+    margin-top: 4px;
+    opacity: 0.8;
+}
+
+.llm-council-inline-btn:hover {
+    background: #8951d6;
+    color: white;
+    opacity: 1;
+}
+
+.llm-council-inline-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+/* Universal Dark Mode Payload (for nested iframes) */
+html.llm-council-dark-mode {
+    filter: invert(1) hue-rotate(180deg) !important;
+    background-color: white !important;
+    /* ensures the inversion has a baseline */
+}
+
+/* Un-invert media and specific elements so they look normal */
+html.llm-council-dark-mode img,
+html.llm-council-dark-mode picture,
+html.llm-council-dark-mode video,
+html.llm-council-dark-mode canvas,
+html.llm-council-dark-mode iframe,
+html.llm-council-dark-mode .dark-mode-ignore {
+    filter: invert(1) hue-rotate(180deg) !important;
+}
