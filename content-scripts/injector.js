@@ -488,21 +488,21 @@
             match: () => /(?:^|\.)z\.ai$/.test(location.hostname),
             getInput: () => document.querySelector('textarea#chat-input') || document.querySelector('textarea[placeholder*="Send a Message"]') || document.querySelector('textarea'),
             setPrompt: (el, text) => {
+                // Save response count BEFORE prompt is sent — this is always called
+                window.__zai_pre_submit_count = document.querySelectorAll('.markdown-prose, .chat-assistant').length;
                 el.focus();
                 setNativeValue(el, text);
             },
             submit: () => {
                 const btn = document.querySelector('button#send-message-button') || document.querySelector('button[type="submit"]');
-                if (isButtonReady(btn)) {
-                    // Save current response count so isComplete waits for a NEW response
-                    window.__zai_pre_submit_count = document.querySelectorAll('.markdown-prose, .chat-assistant').length;
-                    btn.click();
-                    return true;
-                }
+                if (isButtonReady(btn)) { btn.click(); return true; }
                 return false;
             },
             isComplete: () => {
-                const preCount = window.__zai_pre_submit_count || 0;
+                const preCount = window.__zai_pre_submit_count;
+                // If setPrompt hasn't been called yet, not complete
+                if (preCount === undefined) return false;
+
                 const currentMsgs = document.querySelectorAll('.markdown-prose, .chat-assistant');
 
                 // Must have a NEW response element (more than before submission)
