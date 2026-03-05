@@ -9,8 +9,10 @@
     "storage",
     "scripting",
     "alarms",
-    "webNavigation",
-    "declarativeNetRequest"
+    "declarativeNetRequest",
+    "contextMenus",
+    "identity",
+    "webNavigation"
   ],
   "host_permissions": [
     "https://chat.openai.com/*",
@@ -19,7 +21,19 @@
     "https://www.perplexity.ai/*",
     "https://perplexity.ai/*",
     "https://grok.com/*",
-    "https://x.com/*"
+    "https://x.com/*",
+    "https://claude.ai/*",
+    "https://chat.deepseek.com/*",
+    "https://copilot.microsoft.com/*",
+    "https://chat.qwen.ai/*",
+    "https://chat.qwenlm.ai/*",
+    "https://notebooklm.google.com/*",
+    "https://aistudio.google.com/*",
+    "*://*.kimi.moonshot.cn/*",
+    "*://*.kimi.com/*",
+    "*://*.mistral.ai/*",
+    "*://*.poe.com/*",
+    "*://*.z.ai/*"
   ],
   "declarative_net_request": {
     "rule_resources": [
@@ -38,8 +52,18 @@
   "action": {
     "default_icon": {
       "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
+    }
+  },
+  "commands": {
+    "open-council": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A",
+        "mac": "Command+Shift+A"
+      },
+      "description": "Open LLM Council"
     }
   },
   "content_scripts": [
@@ -51,7 +75,22 @@
         "https://www.perplexity.ai/*",
         "https://perplexity.ai/*",
         "https://grok.com/*",
-        "https://x.com/i/grok*"
+        "https://x.com/i/grok*",
+        "https://claude.ai/*",
+        "https://chat.deepseek.com/*",
+        "https://copilot.microsoft.com/*",
+        "https://chat.qwen.ai/*",
+        "https://chat.qwenlm.ai/*",
+        "https://notebooklm.google.com/*",
+        "https://aistudio.google.com/*",
+        "*://*.kimi.moonshot.cn/*",
+        "*://*.kimi.com/*",
+        "*://*.mistral.ai/*",
+        "*://*.poe.com/*",
+        "*://*.z.ai/*"
+      ],
+      "css": [
+        "content-scripts/quick-compare.css"
       ],
       "js": [
         "content-scripts/injector.js"
@@ -62,7 +101,15 @@
   ],
   "icons": {
     "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
+  },
+  "oauth2": {
+    "client_id": "458708234178-gdspq6gf3qboplvk8u846qq9ld51dgai.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
   }
 }
