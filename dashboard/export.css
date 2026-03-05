@@ -1,0 +1,1213 @@
+:root {
+    --bg-page: #fcfcfc;
+    --text-page: #1a1a1a;
+
+    --bg-main: #fcfcfc;
+    --bg-card: #ffffff;
+    --bg-toolbar: #2d2b38;
+    --text-primary: #1a1a1a;
+    --text-secondary: #4a4a4a;
+    --text-muted: #8a8a8a;
+    --border-color: #e5e7eb;
+    --accent-color: #3b82f6;
+    --font-sans: 'Inter', -apple-system, sans-serif;
+    --font-serif: 'Merriweather', Georgia, serif;
+    --dock-bg: white;
+    --dock-border: #e2e8f0;
+    --dock-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+    --dock-text-primary: var(--text-primary);
+    --dock-text-secondary: var(--text-secondary);
+    --dock-bg-inner: var(--bg-main);
+    --dock-border-inner: var(--border-color);
+}
+
+/* Application-Level Themes (Controls the area AROUND the document) */
+body.app-dark {
+    --bg-page: #121212;
+    --text-page: #e5e5e5;
+}
+
+body.app-light {
+    --bg-page: #fcfcfc;
+    --text-page: #1a1a1a;
+}
+
+/* Document-Level Themes (Controls the export document paper and ink) */
+.theme-dark {
+    --bg-main: #1e1e1e;
+    --bg-card: #2d2d2d;
+    --bg-toolbar: #000000;
+    --text-primary: #e5e5e5;
+    --text-secondary: #a3a3a3;
+    --text-muted: #6b7280;
+    --border-color: #404040;
+
+    --dock-bg: #1e1e1e;
+    --dock-border: #333333;
+    --dock-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+
+    --dock-text-primary: #e5e5e5;
+    --dock-text-secondary: #a3a3a3;
+    --dock-bg-inner: #333333;
+    --dock-border-inner: #444444;
+}
+
+.theme-note {
+    --bg-main: #f4efe6;
+    --bg-card: #fffdf5;
+    --bg-toolbar: #2a2734;
+    --text-primary: #2b2821;
+    --text-secondary: #5c5c5c;
+    --text-muted: #8c8577;
+    --border-color: #e2cca1;
+    --font-sans: var(--font-serif);
+
+    --dock-bg: #fffdf5;
+    --dock-border: #e2cca1;
+    --dock-shadow: 0 10px 25px -5px rgba(60, 50, 20, 0.15);
+
+    --dock-text-primary: #2b2821;
+    --dock-text-secondary: #5c5c5c;
+    --dock-bg-inner: #f4efe6;
+    --dock-border-inner: #e2cca1;
+}
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-page);
+    color: var(--text-page);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 120px;
+    /* Space for dock */
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* Toolbar Layout */
+.export-header {
+    background: var(--bg-toolbar);
+    color: white;
+    /* Forced white to maintain consistent header regardless of theme */
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.export-toolbar-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.export-header.submenu-open .export-toolbar-main {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.export-toolbar-submenu {
+    display: none;
+    padding: 0 24px 12px 24px;
+    animation: slideDown 0.2s ease-out;
+}
+
+.export-header.submenu-open .export-toolbar-submenu {
+    display: block;
+}
+
+.submenu-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+}
+
+#btn-more-theme svg {
+    transition: transform 0.2s ease;
+}
+
+.export-header.submenu-open #btn-more-theme svg {
+    transform: rotate(180deg);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.toolbar-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 4px;
+    gap: 2px;
+}
+
+.toolbar-label {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 0 12px 0 8px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.toolbar-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.toolbar-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.toolbar-btn.active {
+    background: #4f46e5;
+    color: white;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 8px;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Custom Select in Submenu */
+.toolbar-select {
+    appearance: none;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 30px 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.toolbar-select option {
+    background: var(--bg-toolbar);
+    color: white;
+}
+
+/* Layout Widths */
+.export-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    width: 100%;
+}
+
+.export-document {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 60px;
+    position: relative;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+/* Dynamic Typography & Layout Overrides */
+.export-document {
+    --doc-fz: 15px;
+    --doc-font: var(--font-sans);
+    font-size: var(--doc-fz);
+    font-family: var(--doc-font);
+}
+
+.export-document.fz-small {
+    --doc-fz: 13px;
+}
+
+.export-document.fz-medium {
+    --doc-fz: 15px;
+}
+
+.export-document.fz-large {
+    --doc-fz: 18px;
+}
+
+.export-document.font-roboto {
+    --doc-font: 'Roboto', sans-serif;
+}
+
+.export-document.font-inter {
+    --doc-font: 'Inter', sans-serif;
+}
+
+.export-document.font-merriweather {
+    --doc-font: 'Merriweather', serif;
+}
+
+.export-document.font-system {
+    --doc-font: system-ui, -apple-system, sans-serif;
+}
+
+/* Table Styles - For Markdown tables when parsed */
+.export-document.table-solid table {
+    border: 1px solid var(--border-color);
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.export-document.table-solid th,
+.export-document.table-solid td {
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+}
+
+.export-document.table-dashed table {
+    border: 1px dashed var(--border-color);
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.export-document.table-dashed th,
+.export-document.table-dashed td {
+    border: 1px dashed var(--border-color);
+    padding: 8px 12px;
+}
+
+.export-document.table-none table {
+    border: none;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.export-document.table-none th,
+.export-document.table-none td {
+    border: none;
+    padding: 8px 12px;
+}
+
+/* Element Visibility Toggles */
+.export-document.hide-time .vibe-time {
+    display: none !important;
+}
+
+.export-document.hide-thinking .vibe-think-block {
+    display: none !important;
+}
+
+body.width-narrow .export-document {
+    max-width: 680px;
+}
+
+body.width-medium .export-document {
+    max-width: 850px;
+}
+
+body.width-full .export-document {
+    max-width: 1100px;
+}
+
+.document-title {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 48px;
+    color: var(--text-primary);
+    outline: none;
+    border-bottom: 2px dashed transparent;
+    padding-bottom: 4px;
+}
+
+.document-title:hover,
+.document-title:focus {
+    border-color: var(--border-color);
+}
+
+/* Vibe coded blocks */
+.vibe-block {
+    margin-bottom: 40px;
+    position: relative;
+    padding-left: 40px;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.vibe-block.selected {
+    opacity: 1;
+}
+
+.vibe-checkbox {
+    position: absolute;
+    left: 0;
+    top: 6px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+}
+
+.vibe-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.vibe-avatar,
+.vibe-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    object-fit: contain;
+}
+
+.vibe-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.vibe-user-req {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 32px;
+    color: var(--text-primary);
+    font-size: var(--doc-fz);
+    font-family: var(--doc-font);
+    line-height: 1.6;
+    margin-left: 40px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.vibe-user-req .vibe-checkbox {
+    left: -40px;
+}
+
+.vibe-user-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.vibe-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* Right-aligned user prompt bubble */
+.vibe-prompt-bubble {
+    background: var(--bg-card, #f3f4f6);
+    border-radius: 18px 18px 4px 18px;
+    padding: 12px 18px;
+    max-width: 75%;
+    width: fit-content;
+    font-size: var(--doc-fz);
+    font-family: var(--doc-font);
+    line-height: 1.6;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* AI response header */
+.vibe-ai-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vibe-ai-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vibe-ai-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+/* Prompt images */
+.prompt-images-inline {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.prompt-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.prompt-img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.prompt-images-inline .prompt-img {
+    max-width: 200px;
+    height: auto;
+}
+
+/* ── Per-Image Checkboxes (left margin) ── */
+.img-cb {
+    position: absolute;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--accent-color, #4f46e5);
+    z-index: 5;
+}
+
+/* Hide image checkboxes when images are turned off */
+.export-document.hide-images .img-cb {
+    display: none !important;
+}
+
+/* ── Rich Content Image Grid (3 per row like ChatGPT) ── */
+.rich-content img {
+    max-width: 31%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+    vertical-align: top;
+}
+
+/* Images inside flex containers created by cleanClone */
+.rich-content [data-img-container] img {
+    flex: 0 0 calc(33.33% - 6px);
+    max-width: calc(33.33% - 6px);
+    height: 200px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* ── Image Settings via data attributes ── */
+.export-document[data-img-size="small"] .rich-content img,
+.export-document[data-img-size="small"] .rich-content [data-img-container] img {
+    max-width: 20%;
+    flex: 0 0 calc(20% - 6px);
+}
+
+.export-document[data-img-size="original"] .rich-content img,
+.export-document[data-img-size="original"] .rich-content [data-img-container] img {
+    max-width: calc(33.33% - 6px);
+    flex: 0 0 calc(33.33% - 6px);
+}
+
+.export-document[data-img-size="large"] .rich-content img,
+.export-document[data-img-size="large"] .rich-content [data-img-container] img {
+    max-width: 48%;
+    flex: 0 0 calc(48% - 6px);
+}
+
+.export-document[data-img-size="full"] .rich-content img,
+.export-document[data-img-size="full"] .rich-content [data-img-container] img {
+    max-width: 100%;
+    width: 100%;
+    flex: 0 0 100%;
+    margin: 8px 0;
+}
+
+.export-document[data-img-position="stack"] .rich-content img,
+.export-document[data-img-position="stack"] .rich-content [data-img-container] img {
+    display: block;
+    max-width: 80%;
+    flex: 0 0 100%;
+    margin: 12px 0;
+}
+
+.export-document[data-img-position="stack"] .rich-content [data-img-container] {
+    flex-direction: column !important;
+}
+
+.export-document[data-img-border="on"] .rich-content img {
+    border: 2px solid var(--img-border-color, #e5e7eb);
+    border-radius: 8px;
+}
+
+.export-document[data-img-border="off"] .rich-content img {
+    border: none;
+}
+
+/* ── Hide Images: completely collapse ALL image elements and containers ── */
+.export-document.hide-images .rich-content img,
+.export-document.hide-images .rich-content [data-img-container],
+.export-document.hide-images .rich-content a:has(img),
+.export-document.hide-images .rich-content picture,
+.export-document.hide-images .rich-content figure:has(img),
+.export-document.hide-images .prompt-images-inline,
+.export-document.hide-images .prompt-images-grid {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: none !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+}
+
+/* ── Code Settings via data attributes ── */
+.export-document .rich-content pre {
+    background: var(--code-bg, #1e1e2e) !important;
+}
+
+.export-document[data-code-size="small"] .rich-content pre,
+.export-document[data-code-size="small"] .rich-content code {
+    font-size: 11px;
+}
+
+.export-document[data-code-size="medium"] .rich-content pre,
+.export-document[data-code-size="medium"] .rich-content code {
+    font-size: 13px;
+}
+
+.export-document[data-code-size="large"] .rich-content pre,
+.export-document[data-code-size="large"] .rich-content code {
+    font-size: 15px;
+}
+
+/* Code theme: Monokai */
+.export-document[data-code-theme="monokai"] .rich-content pre {
+    background: #272822 !important;
+    color: #f8f8f2 !important;
+}
+
+/* Code theme: GitHub */
+.export-document[data-code-theme="github"] .rich-content pre {
+    background: #f6f8fa !important;
+    color: #24292e !important;
+}
+
+/* Code theme: Solarized */
+.export-document[data-code-theme="solarized"] .rich-content pre {
+    background: #002b36 !important;
+    color: #839496 !important;
+}
+
+.vibe-content {
+    font-size: var(--doc-fz);
+    font-family: var(--doc-font);
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.vibe-content h1,
+.vibe-content h2,
+.vibe-content h3 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+}
+
+.vibe-content p {
+    margin-bottom: 1em;
+}
+
+.vibe-content ul,
+.vibe-content ol {
+    margin-bottom: 1em;
+    padding-left: 20px;
+}
+
+.vibe-content li {
+    margin-bottom: 0.5em;
+}
+
+.vibe-content pre {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    font-family: inherit;
+    font-size: inherit;
+    margin-bottom: 1em;
+}
+
+/* Rich Content (captured HTML from AI sites) */
+.rich-content {
+    line-height: 1.7;
+}
+
+.rich-content pre {
+    background: #1e1e2e !important;
+    color: #cdd6f4 !important;
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+}
+
+/* Language header bar inside captured code blocks (ChatGPT's sticky header) */
+/* In ChatGPT 2025, <pre> > <div wrapper> > [<div header>, <div code-body>] */
+/* The first child div is the WRAPPER — must stack children vertically */
+.rich-content pre>div:first-child:not(code) {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    box-sizing: border-box;
+    background: transparent !important;
+}
+
+/* The header div inside the wrapper (has language name) */
+.rich-content pre>div:first-child:not(code)>div:first-child {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 6px;
+    padding: 6px 12px !important;
+    width: 100% !important;
+    box-sizing: border-box;
+    background: transparent !important;
+    font-size: 13px !important;
+    font-weight: 600;
+    color: #e2e8f0 !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    text-align: left !important;
+}
+
+/* Code body div (the div after the header, contains actual code) */
+.rich-content pre>div:first-child:not(code)>div:last-child {
+    display: block;
+    padding: 12px;
+    overflow-x: auto;
+    white-space: pre;
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Actual code content inside pre (classic <code> structure — backward compat) */
+.rich-content pre code,
+.rich-content pre>code {
+    display: block;
+    padding: 12px;
+    overflow-x: auto;
+    white-space: pre;
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* When pre has no header div, code gets full padding */
+.rich-content pre:not(:has(> div:first-child)) {
+    padding: 12px;
+}
+
+.rich-content code {
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.9em;
+}
+
+.rich-content :not(pre)>code {
+    background: rgba(136, 81, 214, 0.15);
+    color: #c084fc;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+}
+
+.rich-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.95em;
+}
+
+.rich-content th,
+.rich-content td {
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.rich-content th {
+    background: var(--bg-main);
+    font-weight: 600;
+}
+
+.rich-content blockquote {
+    border-left: 3px solid var(--accent, #8951d6);
+    padding-left: 16px;
+    margin: 12px 0;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.rich-content hr {
+    border: none;
+    height: 1px;
+    background: var(--border-color);
+    margin: 20px 0;
+}
+
+.rich-content strong {
+    font-weight: 700;
+}
+
+.rich-content a {
+    color: var(--accent, #8951d6);
+    text-decoration: underline;
+}
+
+.vibe-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 40px 0;
+}
+
+/* Floating Actions */
+.side-actions {
+    position: fixed;
+    right: 24px;
+    bottom: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.side-action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+}
+
+.side-action-btn:hover {
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Floating Dock */
+.floating-dock {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--dock-bg);
+    border: 1px solid var(--dock-border);
+    border-radius: 30px;
+    padding: 12px 24px;
+    box-shadow: var(--dock-shadow);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s;
+}
+
+.dock-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dock-btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--dock-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.dock-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--dock-text-primary);
+}
+
+.dock-counter {
+    background: var(--dock-bg-inner);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--dock-text-secondary);
+}
+
+.dock-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--dock-border-inner);
+}
+
+.dock-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.export-chip {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.export-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.bg-red {
+    background-color: #ef4444;
+}
+
+.bg-green {
+    background-color: #10b981;
+}
+
+.bg-blue {
+    background-color: #3b82f6;
+}
+
+.bg-orange {
+    background-color: #f97316;
+}
+
+.bg-yellow {
+    background-color: #eab308;
+}
+
+.bg-teal {
+    background-color: #14b8a6;
+}
+
+.bg-black {
+    background-color: #1a1a1a;
+}
+
+/* Copy chip distinction */
+.copy-chip {
+    border: 2px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+.bg-copy-img {
+    background-color: #059669;
+}
+
+.bg-copy-md {
+    background-color: #0284c7;
+}
+
+.bg-copy-json {
+    background-color: #d97706;
+}
+
+.bg-copy-txt {
+    background-color: #7c3aed;
+}
+
+/* Tooltip on hover */
+.export-chip[data-tooltip] {
+    position: relative;
+    cursor: pointer;
+}
+
+.export-chip[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1e1e2e;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1002;
+}
+
+.export-chip[data-tooltip]::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #1e1e2e;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 1002;
+}
+
+.export-chip[data-tooltip]:hover::after,
+.export-chip[data-tooltip]:hover::before {
+    opacity: 1;
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background-color: #f5f0e8 !important;
+        padding: 0;
+        margin: 0;
+        color: var(--text-primary) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .export-container {
+        padding: 20px;
+        width: 100%;
+        background-color: #f5f0e8 !important;
+    }
+
+    .export-document {
+        box-shadow: none;
+        border: none;
+        padding: 30px;
+        margin: 0 auto;
+        background-color: var(--bg-main) !important;
+        border-radius: 0;
+    }
+
+    .vibe-block.selected {
+        page-break-inside: auto;
+    }
+
+    /* Hide unselected blocks in print */
+    .vibe-block:not(.selected),
+    .vibe-user-req:not(.selected) {
+        display: none !important;
+    }
+
+    .vibe-checkbox,
+    .img-cb {
+        display: none !important;
+    }
+
+    .vibe-block {
+        padding-left: 0;
+        opacity: 1;
+    }
+
+    .vibe-user-req {
+        margin-left: 0;
+    }
+}
+
+/* Content List Popup */
+.content-list-popup {
+    position: absolute;
+    bottom: calc(100% + 12px);
+    left: 0;
+    min-width: 300px;
+    max-width: 400px;
+    max-height: 50vh;
+    overflow-y: auto;
+    background: var(--dock-bg, #1e1e2e);
+    border: 1px solid var(--dock-border, rgba(255, 255, 255, 0.1));
+    border-radius: 12px;
+    padding: 12px 0;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    display: none;
+}
+
+.content-list-popup.open {
+    display: block;
+}
+
+.content-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 13px;
+    color: var(--dock-text-primary, #fff);
+}
+
+.content-list-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.content-list-item input[type="checkbox"] {
+    accent-color: var(--accent-color, #4f46e5);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.content-list-item .item-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.content-list-item .item-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.content-list-actions {
+    display: flex;
+    gap: 4px;
+    padding: 8px 16px 4px;
+    border-top: 1px solid var(--dock-border-inner, rgba(255, 255, 255, 0.08));
+    margin-top: 4px;
+}
+
+.content-list-actions button {
+    background: transparent;
+    border: none;
+    color: var(--dock-text-secondary, rgba(255, 255, 255, 0.5));
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.content-list-actions button:hover {
+    color: var(--dock-text-primary, #fff);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.content-list-actions button.active {
+    color: var(--accent-color, #4f46e5);
+    text-decoration: underline;
+}

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Council - Premium Export</title>
+    <link rel="stylesheet" href="export.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="width-full">
+
+    <!-- Top Header -->
+    <header class="export-header no-print">
+        <!-- Main Toolbar -->
+        <div class="export-toolbar-main">
+            <div class="toolbar-left">
+                <img src="../icons/icon48.png" alt="Logo" class="toolbar-logo">
+
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Width</span>
+                    <button class="toolbar-btn active" data-width="full" title="Full Width">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn" data-width="medium" title="Medium Width">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="5" y="3" width="14" height="18" rx="2" ry="2"></rect>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn" data-width="narrow" title="Narrow Width">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="7" y="3" width="10" height="18" rx="2" ry="2"></rect>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Theme</span>
+                    <button class="toolbar-btn active" data-theme="light">Light</button>
+                    <button class="toolbar-btn" data-theme="dark">Dark</button>
+                    <button class="toolbar-btn" data-theme="note">Note</button>
+                    <button class="toolbar-btn dropdown-btn" id="btn-more-theme">
+                        <span>More</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn dropdown-btn" id="btn-images">
+                        <span>Images</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                    </button>
+                    <button class="toolbar-btn dropdown-btn" id="btn-code">
+                        <span>Code</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="toolbar-right"></div>
+        </div>
+
+        <!-- More Submenu -->
+        <div class="export-toolbar-submenu" id="toolbar-submenu">
+            <div class="submenu-inner">
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Font Size</span>
+                    <button class="toolbar-btn" data-fz="small">Small</button>
+                    <button class="toolbar-btn active" data-fz="medium">Medium</button>
+                    <button class="toolbar-btn" data-fz="large">Large</button>
+                </div>
+
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Table Style</span>
+                    <button class="toolbar-btn active" data-table="solid">Solid</button>
+                    <button class="toolbar-btn" data-table="dashed">Dashed</button>
+                    <button class="toolbar-btn" data-table="none">None</button>
+                </div>
+
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Show Chat Time</span>
+                    <button class="toolbar-btn" data-time="yes">Yes</button>
+                    <button class="toolbar-btn active" data-time="no">No</button>
+
+                    <div class="toolbar-group">
+                        <span class="toolbar-label">Font
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" style="margin-left:4px; opacity:0.6;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                        </span>
+                        <select class="toolbar-select" id="font-select">
+                            <option value="Roboto">Roboto</option>
+                            <option value="Inter">Inter</option>
+                            <option value="Merriweather">Merriweather</option>
+                            <option value="System">System</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Images Submenu -->
+        <div class="export-toolbar-submenu" id="toolbar-submenu-images" style="display:none;">
+            <div class="submenu-inner">
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Show Images</span>
+                    <button class="toolbar-btn active" data-img-enabled="true">On</button>
+                    <button class="toolbar-btn" data-img-enabled="false">Off</button>
+                </div>
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Image Size</span>
+                    <button class="toolbar-btn" data-img-size="small">Small</button>
+                    <button class="toolbar-btn active" data-img-size="original">Original</button>
+                    <button class="toolbar-btn" data-img-size="large">Large</button>
+                    <button class="toolbar-btn" data-img-size="full">Full Width</button>
+                </div>
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Position</span>
+                    <button class="toolbar-btn active" data-img-pos="inline">Inline</button>
+                    <button class="toolbar-btn" data-img-pos="stack">Stack (one by one)</button>
+                </div>
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Border</span>
+                    <button class="toolbar-btn active" data-img-border="on">On</button>
+                    <button class="toolbar-btn" data-img-border="off">Off</button>
+                    <input type="color" id="img-border-color" value="#e5e7eb" title="Border Color"
+                        style="width:28px; height:28px; border:none; border-radius:4px; cursor:pointer; vertical-align:middle;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Code Submenu -->
+        <div class="export-toolbar-submenu" id="toolbar-submenu-code" style="display:none;">
+            <div class="submenu-inner">
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Syntax Theme</span>
+                    <button class="toolbar-btn active" data-code-theme="default">Default</button>
+                    <button class="toolbar-btn" data-code-theme="monokai">Monokai</button>
+                    <button class="toolbar-btn" data-code-theme="github">GitHub</button>
+                    <button class="toolbar-btn" data-code-theme="solarized">Solarized</button>
+                </div>
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Code Size</span>
+                    <button class="toolbar-btn" data-code-size="small">Small</button>
+                    <button class="toolbar-btn active" data-code-size="medium">Medium</button>
+                    <button class="toolbar-btn" data-code-size="large">Large</button>
+                </div>
+                <div class="toolbar-group">
+                    <span class="toolbar-label">Background</span>
+                    <button class="toolbar-btn code-bg-btn active" data-code-bg="#1e1e2e"
+                        style="background:#1e1e2e; color:#cdd6f4; border-color:#444;">Dark</button>
+                    <button class="toolbar-btn code-bg-btn" data-code-bg="#282c34"
+                        style="background:#282c34; color:#abb2bf; border-color:#444;">Atom</button>
+                    <button class="toolbar-btn code-bg-btn" data-code-bg="#272822"
+                        style="background:#272822; color:#f8f8f2; border-color:#444;">Monokai</button>
+                    <button class="toolbar-btn code-bg-btn" data-code-bg="#f5f5f5"
+                        style="background:#f5f5f5; color:#333; border-color:#ddd;">Light</button>
+                    <button class="toolbar-btn code-bg-btn" data-code-bg="#002b36"
+                        style="background:#002b36; color:#839496; border-color:#444;">Solar</button>
+                    <input type="color" id="code-custom-bg" value="#1e1e2e" title="Custom Background"
+                        style="width:28px; height:28px; border:none; border-radius:4px; cursor:pointer; vertical-align:middle;">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="export-container">
+        <div class="export-document theme-light" id="export-document">
+            <h1 class="document-title" id="doc-title" contenteditable="true">LLM Council Export</h1>
+
+            <div id="responses-vibe">
+                <!-- Generating content via JS -->
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    Gathering council records...
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Dock -->
+    <div class="floating-dock no-print" id="floating-dock">
+        <div class="dock-inner">
+            <button class="dock-btn-icon" id="btn-content-list" title="Content List">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+            </button>
+            <label class="dock-checkbox-label">
+                <input type="checkbox" id="select-all" checked> All
+            </label>
+            <span class="dock-counter" id="dock-counter">0/0 items</span>
+
+            <div class="dock-divider"></div>
+
+            <div class="dock-actions">
+                <button class="export-chip bg-red" data-format="pdf" data-tooltip="Download PDF">PDF</button>
+                <button class="export-chip bg-green" data-format="png" data-tooltip="Download PNG">PNG</button>
+                <button class="export-chip bg-blue" data-format="md" data-tooltip="Download Markdown">MD</button>
+                <button class="export-chip bg-orange" data-format="json" data-tooltip="Download JSON">{ }</button>
+                <button class="export-chip bg-yellow" data-format="txt" data-tooltip="Download Text">TXT</button>
+                <button class="export-chip bg-teal" data-format="html" data-tooltip="Download HTML">HTML</button>
+            </div>
+
+            <div class="dock-divider"></div>
+
+            <div class="dock-actions">
+                <button class="export-chip copy-chip bg-copy-img" data-copy="image"
+                    data-tooltip="Copy as Image">🖼</button>
+                <button class="export-chip copy-chip bg-copy-md" data-copy="md"
+                    data-tooltip="Copy as Markdown">MD</button>
+                <button class="export-chip copy-chip bg-copy-json" data-copy="json" data-tooltip="Copy as JSON">{
+                    }</button>
+                <button class="export-chip copy-chip bg-copy-txt" data-copy="txt"
+                    data-tooltip="Copy as Text">TXT</button>
+            </div>
+
+            <!-- Content List Popup -->
+            <div class="content-list-popup" id="content-list-popup"></div>
+        </div>
+    </div>
+
+    <!-- Floating Side Actions -->
+    <div class="side-actions no-print">
+        <button class="side-action-btn" title="Help">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+        </button>
+        <button class="side-action-btn" title="Back to Top" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="19" x2="12" y2="5"></line>
+                <polyline points="5 12 12 5 19 12"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- html2canvas for PNG export -->
+    <script src="../utils/html2canvas.min.js"></script>
+    <script src="export.js" type="module"></script>
+</body>
+
+</html>
