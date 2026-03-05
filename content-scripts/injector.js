@@ -497,27 +497,33 @@
                 return false;
             },
             isComplete: () => {
-                // Check if still 'Thinking...' or generating
-                const isThinking = Array.from(document.querySelectorAll('div, span, button')).some(el =>
-                    el.innerText?.trim() === 'Thinking...' || el.innerText?.trim() === 'Skip'
-                );
-                if (isThinking) return false;
+                // 1. Check for 'Skip' button — unique to Z.AI's thinking phase
+                const skipBtn = document.querySelector('button');
+                const hasSkip = Array.from(document.querySelectorAll('button')).some(b => b.textContent?.trim() === 'Skip');
+                if (hasSkip) return false;
 
-                // During generation, the send button might be replaced by a stop button 
-                const stopBtn = document.querySelector('button.bg-black.rounded-full:not(#send-message-button), button[aria-label*="Stop"]');
-                if (stopBtn) return false;
+                // 2. Check for 'Thinking...' text anywhere on the page
+                const bodyText = document.body?.innerText || '';
+                if (bodyText.includes('Thinking...')) return false;
 
-                // Specific Z.AI completion indicators (Copy/Regenerate buttons appear when done)
-                const actionBtns = document.querySelectorAll('button.copy-response-button, button.regenerate-response-button');
-                if (actionBtns.length > 0) return true;
+                // 3. Check if the stop button is present (replaces send button during generation)
+                const sendBtn = document.querySelector('button#send-message-button');
+                if (!sendBtn) return false; // Send button gone = still generating
 
-                // Fallback check
-                const responses = document.querySelectorAll('.markdown-prose, #response-content-container, .chat-assistant');
-                return responses.length > 0 && document.querySelector('button#send-message-button') !== null;
+                // 4. Now confirm a response with actual content exists
+                const msgs = document.querySelectorAll('.markdown-prose, .chat-assistant');
+                if (msgs.length === 0) return false;
+                const lastMsg = msgs[msgs.length - 1].innerText?.trim() || '';
+                // Make sure it's real content, not just "Thought Process" placeholder
+                return lastMsg.length > 20 && !lastMsg.startsWith('Thinking');
             },
             getResponse: () => {
                 const msgs = document.querySelectorAll('.markdown-prose, .chat-assistant');
-                return msgs.length ? msgs[msgs.length - 1].innerText.trim() : '';
+                if (!msgs.length) return '';
+                let text = msgs[msgs.length - 1].innerText?.trim() || '';
+                // Strip "Thought Process" prefix if present
+                text = text.replace(/^Thought Process\s*\n?/i, '').trim();
+                return text;
             }
         },
 
