@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM Council</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="dashboard.css?v=13">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="theme-init.js"></script>
 </head>
 
 <body>
@@ -41,6 +42,36 @@
 
         <div class="sidebar-footer">
             <span class="sidebar-hint">No saved prompts yet</span>
+
+            <!-- Theme Toggle -->
+            <button class="nav-item" id="btn-theme-toggle"
+                style="margin-top: 12px; border: 1px solid var(--border-color); border-radius: 8px; justify-content: flex-start; gap: 12px; height: 44px; display: flex; align-items: center; padding: 0 16px; cursor: pointer; background: transparent; transition: all 0.2s; color: var(--text-primary); margin-bottom: 8px;">
+                <span id="theme-icon" style="font-size: 16px;">🌙</span>
+                <span class="nav-label" style="font-weight: 500;">Dark Mode</span>
+            </button>
+
+            <!-- Sync Button -->
+            <button class="nav-item sync-btn" id="btn-enable-sync"
+                style="margin-top: auto; border: 1px solid var(--border-color); border-radius: 8px; justify-content: flex-start; gap: 12px; height: 44px; display: flex; align-items: center; padding: 0 16px; cursor: pointer; background: transparent; transition: all 0.2s; color: var(--text-primary); margin-bottom: 8px;">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                </svg>
+                <span class="nav-label" style="font-weight: 500;">Enable Sync</span>
+            </button>
+
+            <!-- Synced Account State (Hidden by default) -->
+            <div class="sync-account-info" id="sync-account-info"
+                style="display: none; align-items: center; gap: 8px; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-secondary); margin-top: auto; margin-bottom: 8px;">
+                <img src="" alt="Profile" id="sync-avatar" style="width: 24px; height: 24px; border-radius: 50%;">
+                <div style="display: flex; flex-direction: column; overflow: hidden;">
+                    <span id="sync-email"
+                        style="font-size: 12px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></span>
+                    <span style="font-size: 10px; color: var(--text-secondary);">Synced</span>
+                </div>
+                <button id="btn-disable-sync" title="Disable Sync"
+                    style="margin-left: auto; background: none; border: none; cursor: pointer; color: var(--text-muted);">✕</button>
+            </div>
         </div>
     </aside>
 
@@ -56,6 +87,7 @@
                     <strong>Pin the extension for quick access</strong>
                     <span>Click the puzzle icon in the toolbar → Find "LLM Council" → Click the pin icon</span>
                 </div>
+                <img src="../assets/pin-instruction.png" alt="Pin instruction" class="banner-instruction-img">
                 <button class="banner-close" id="banner-close">✕</button>
             </div>
 
@@ -63,9 +95,27 @@
 
             <!-- AI Sites Grid -->
             <section class="models-section">
-                <div class="models-header">
+                <div class="models-header"
+                    style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                     <h2 class="models-title">AI sites</h2>
-                    <span class="model-count" id="model-count">0 selected</span>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span class="model-count" id="model-count">0 selected</span>
+                        <div class="preset-buttons" style="display: flex; align-items: center;">
+                            <span
+                                style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-right: 8px;">Presets:</span>
+                            <div
+                                style="display: flex; background: var(--bg-primary); border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color);">
+                                <button class="btn btn-sm" id="preset-all"
+                                    style="border: none; border-radius: 0; background: transparent; border-right: 1px solid var(--border-color); padding: 4px 10px; font-weight: 500; color: var(--text-secondary);">All</button>
+                                <button class="btn btn-sm" id="preset-coding"
+                                    style="border: none; border-radius: 0; background: transparent; border-right: 1px solid var(--border-color); padding: 4px 10px; font-weight: 500; color: var(--text-secondary);">Coding</button>
+                                <button class="btn btn-sm" id="preset-writing"
+                                    style="border: none; border-radius: 0; background: transparent; border-right: 1px solid var(--border-color); padding: 4px 10px; font-weight: 500; color: var(--text-secondary);">Writing</button>
+                                <button class="btn btn-sm" id="preset-clear"
+                                    style="border: none; border-radius: 0; background: transparent; padding: 4px 10px; font-weight: 500; color: var(--text-secondary);">Clear</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="models-grid" id="models-grid"></div>
             </section>
@@ -85,7 +135,8 @@
         <!-- ═══ SETTINGS VIEW ═══ -->
         <div class="view" id="view-settings">
             <h1 class="page-title">Settings</h1>
-            <div class="settings-content">
+
+            <div class="settings-content" style="margin-bottom: 30px;">
                 <div class="setting-row">
                     <label>Council Timeout (seconds)</label>
                     <input type="number" id="setting-timeout" value="120" min="30" max="300" class="setting-input">
@@ -95,12 +146,170 @@
                     <input type="number" id="setting-delay" value="1500" min="500" max="5000" class="setting-input">
                 </div>
             </div>
+
+            <div class="settings-section" style="margin-bottom: 30px;">
+                <h2 class="settings-section-title" style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Ask
+                    Council Button</h2>
+                <p class="settings-section-desc"
+                    style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                    Customize the "Ask Council" button that appears next to your messages on AI sites
+                </p>
+                <div class="setting-row">
+                    <label>Show Button</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="setting-ask-council-enabled" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <label>Button Color</label>
+                    <input type="color" id="setting-ask-council-color" value="#8951d6"
+                        style="width: 40px; height: 32px; border: none; border-radius: 6px; cursor: pointer; background: none;">
+                </div>
+                <div class="setting-row">
+                    <label>Button Size</label>
+                    <select id="setting-ask-council-size" class="setting-input" style="width: auto;">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                <div class="setting-row">
+                    <label>Button Position</label>
+                    <select id="setting-ask-council-position" class="setting-input" style="width: auto;">
+                        <option value="bottom" selected>Bottom (below message)</option>
+                        <option value="side">Side (next to message)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-section" style="margin-bottom: 30px;">
+                <h2 class="settings-section-title" style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Export
+                    Button</h2>
+                <p class="settings-section-desc"
+                    style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+                    Customize the "Export" button that appears next to your messages on AI sites for quick exporting
+                </p>
+                <div class="setting-row">
+                    <label>Show Button</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="setting-export-btn-enabled" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <label>Button Color</label>
+                    <input type="color" id="setting-export-btn-color" value="#0ea5e9"
+                        style="width: 40px; height: 32px; border: none; border-radius: 6px; cursor: pointer; background: none;">
+                </div>
+                <div class="setting-row">
+                    <label>Button Size</label>
+                    <select id="setting-export-btn-size" class="setting-input" style="width: auto;">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+                <div class="setting-row">
+                    <label>Button Position</label>
+                    <select id="setting-export-btn-position" class="setting-input" style="width: auto;">
+                        <option value="bottom" selected>Bottom (below message)</option>
+                        <option value="side">Side (next to message)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2 class="settings-section-title" style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Prompt
+                    Templates</h2>
+                <p class="settings-section-desc"
+                    style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">Customize prompt
+                    templates for AI comparison search</p>
+                <button class="btn btn-primary" id="btn-add-template"
+                    style="background: #22c55e; margin-bottom: 24px;">+ Add New Template</button>
+                <div class="templates-list" id="templates-list"
+                    style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- Templates rendered via JS -->
+                </div>
+            </div>
+
+            <div class="settings-section" style="margin-top: 48px; margin-bottom: 40px;">
+                <h2 class="settings-section-title" style="font-size: 20px; font-weight: 700; margin-bottom: 8px;">Data
+                    Sync</h2>
+                <p class="settings-section-desc"
+                    style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Sync all your settings
+                    across devices (Beta - may contain bugs)</p>
+
+                <div class="sync-toggle-row" style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                    <input type="checkbox" id="sync-webdav-enable" style="width: 16px; height: 16px; cursor: pointer;">
+                    <label for="sync-webdav-enable" style="font-size: 14px; font-weight: 500; cursor: pointer;">Enable
+                        sync to</label>
+                    <select id="sync-provider" class="setting-input"
+                        style="width: auto; padding: 6px 12px; font-size: 13px;">
+                        <option value="webdav">WebDAV</option>
+                    </select>
+                </div>
+
+                <div class="webdav-config-grid" id="webdav-config-form"
+                    style="display: grid; grid-template-columns: 1fr 2.5fr 1fr 1fr; gap: 12px; background: var(--bg-secondary); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Auth type</label>
+                        <select id="webdav-auth-type" class="setting-input"
+                            style="background: var(--bg-primary); font-size: 13px;">
+                            <option value="password">password</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">URL</label>
+                        <input type="text" id="webdav-url" placeholder="https://your-webdav-server.com/dav/"
+                            class="setting-input" style="background: var(--bg-primary); font-size: 13px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Username</label>
+                        <input type="text" id="webdav-username" class="setting-input"
+                            style="background: var(--bg-primary); font-size: 13px;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Password</label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" id="webdav-password" class="setting-input"
+                                style="background: var(--bg-primary); padding-right: 32px; width: 100%; font-size: 13px;">
+                            <button id="webdav-toggle-password"
+                                style="position: absolute; right: 8px; background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <button class="btn btn-primary" id="btn-sync-save" style="background: #22c55e;">Save</button>
+                    <button class="btn btn-outline" id="btn-sync-restore"
+                        style="background: #f3f4f6; color: #374151; border-color: #d1d5db;">Restore from cloud</button>
+                    <span id="sync-status-indicator"
+                        style="font-size: 12px; margin-left: 12px; font-weight: 500;"></span>
+                </div>
+            </div>
         </div>
 
         <!-- ═══ HISTORY VIEW ═══ -->
         <div class="view" id="view-history">
-            <h1 class="page-title">History</h1>
-            <p class="placeholder-text">No previous queries yet. Your prompt history will appear here.</p>
+            <div class="history-header">
+                <h1 class="page-title" style="margin-bottom: 0;">History</h1>
+                <button class="btn btn-danger" id="btn-clear-history">Clear History</button>
+            </div>
+
+            <div class="history-search">
+                <input type="text" id="history-search-input" placeholder="Search by query ..." autocomplete="off">
+            </div>
+
+            <div class="history-list" id="history-list">
+                <p class="placeholder-text">No previous queries yet. Your prompt history will appear here.</p>
+            </div>
         </div>
 
         <!-- ═══ JUDGE CONFIG VIEW ═══ -->
@@ -122,7 +331,8 @@
                 </div>
                 <p class="judge-prompt-hint">Use <code>{question}</code> for the user's original question and
                     <code>{responses}</code> for the council's answers. The Judge will follow this prompt to evaluate
-                    responses.</p>
+                    responses.
+                </p>
                 <textarea id="judge-custom-prompt" class="judge-prompt-textarea"
                     placeholder="Enter your custom Judge evaluation prompt..." rows="14"></textarea>
                 <span class="judge-prompt-saved hidden" id="judge-prompt-saved">✅ Saved!</span>
@@ -138,32 +348,66 @@
 
     </main>
 
-    <!-- Bottom Prompt Bar (always visible) -->
+    <!-- Floating Draggable Prompt Bar -->
     <div class="prompt-bar" id="prompt-bar">
+        <!-- Drag Handle / Header -->
+        <div class="prompt-bar-header" id="prompt-bar-drag-handle" title="Drag to move">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="9" cy="5" r="1.5" />
+                <circle cx="15" cy="5" r="1.5" />
+                <circle cx="9" cy="12" r="1.5" />
+                <circle cx="15" cy="12" r="1.5" />
+                <circle cx="9" cy="19" r="1.5" />
+                <circle cx="15" cy="19" r="1.5" />
+            </svg>
+        </div>
+
         <div class="prompt-bar-inner">
-            <div class="prompt-templates">
+            <div class="prompt-templates" id="prompt-templates-bar">
                 <span class="template-label">Template:</span>
-                <button class="template-tag"
-                    data-template="Compare these models' responses objectively.">Compare</button>
-                <button class="template-tag"
-                    data-template="Explain this topic in detail with examples.">Explain</button>
-                <button class="template-tag"
-                    data-template="Analyze the pros and cons of this approach.">Analyze</button>
+                <!-- Populated dynamically by JS -->
             </div>
             <div class="prompt-input-row">
-                <input type="text" id="prompt-input" class="prompt-input" placeholder="Enter content to search..."
-                    autocomplete="off">
-                <button class="btn-attach" id="btn-attach" title="Attach file">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path
-                            d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-                    </svg>
-                </button>
-                <button class="btn-send" id="btn-send" disabled title="Send prompt to council">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                    </svg>
-                </button>
+                <textarea id="prompt-input" class="prompt-input"
+                    placeholder="Type a prompt to send to all models... (Shift+Enter for new line)"></textarea>
+                <div class="prompt-actions">
+                    <button class="btn-attach" id="btn-attach" title="Attach file">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                        </svg>
+                    </button>
+                    <button class="btn-action" id="btn-export" title="Export Results">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
+                    <button class="btn-action" id="btn-layout" title="Toggle Layout (Side-by-side)">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="9" y1="3" x2="9" y2="21"></line>
+                        </svg>
+                    </button>
+                    <button class="btn-action" id="btn-add-agent" title="Select Agents">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </button>
+                    <button class="btn-send" id="btn-send" disabled title="Send prompt to council">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
         <!-- Status bar inside prompt bar -->
@@ -187,8 +431,49 @@
             </div>
         </div>
     </div>
+    </div>
 
-    <script src="dashboard.js" type="module"></script>
+
+    <!-- Template Editor Modal -->
+    <div class="results-modal" id="template-modal" style="display: none;">
+        <div class="results-card" style="max-width: 500px;">
+            <div class="results-header">
+                <h2>📝 Edit Template</h2>
+                <button class="results-close" id="template-close">✕</button>
+            </div>
+            <div class="export-body" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <input type="hidden" id="template-id">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Template
+                        Name</label>
+                    <input type="text" id="template-name" class="setting-input" placeholder="e.g. RiskAnalysis"
+                        style="font-size: 13px; font-weight: 500;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Display
+                        Order</label>
+                    <input type="number" id="template-order" class="setting-input" value="1" min="1"
+                        style="font-size: 13px;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Prompt
+                        Content</label>
+                    <span style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">Construct the final
+                        prompt output. Use <code>{query}</code> (including the curly braces) where the user's typed
+                        input should be inserted.</span>
+                    <textarea id="template-content" class="setting-input"
+                        style="height: 120px; resize: vertical; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px; line-height: 1.5; background: var(--bg-secondary);"
+                        placeholder="Root cause of the failure: 「{query}」"></textarea>
+                </div>
+            </div>
+            <div class="results-footer" style="justify-content: flex-end;">
+                <button class="btn btn-outline" id="template-cancel-btn">Cancel</button>
+                <button class="btn btn-primary" id="template-save-btn">Save Template</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js?v=40" type="module"></script>
 </body>
 
 </html>
