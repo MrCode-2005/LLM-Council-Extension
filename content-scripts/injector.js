@@ -493,28 +493,35 @@
             },
             submit: () => {
                 const btn = document.querySelector('button#send-message-button') || document.querySelector('button[type="submit"]');
-                if (isButtonReady(btn)) { btn.click(); return true; }
+                if (isButtonReady(btn)) {
+                    // Save current response count so isComplete waits for a NEW response
+                    window.__zai_pre_submit_count = document.querySelectorAll('.markdown-prose, .chat-assistant').length;
+                    btn.click();
+                    return true;
+                }
                 return false;
             },
             isComplete: () => {
-                // 1. Check for 'Skip' button — unique to Z.AI's thinking phase
-                const skipBtn = document.querySelector('button');
+                const preCount = window.__zai_pre_submit_count || 0;
+                const currentMsgs = document.querySelectorAll('.markdown-prose, .chat-assistant');
+
+                // Must have a NEW response element (more than before submission)
+                if (currentMsgs.length <= preCount) return false;
+
+                // Check for 'Skip' button (Z.AI thinking phase)
                 const hasSkip = Array.from(document.querySelectorAll('button')).some(b => b.textContent?.trim() === 'Skip');
                 if (hasSkip) return false;
 
-                // 2. Check for 'Thinking...' text anywhere on the page
+                // Check for 'Thinking...' text
                 const bodyText = document.body?.innerText || '';
                 if (bodyText.includes('Thinking...')) return false;
 
-                // 3. Check if the stop button is present (replaces send button during generation)
+                // Send button must be back (not replaced by stop button)
                 const sendBtn = document.querySelector('button#send-message-button');
-                if (!sendBtn) return false; // Send button gone = still generating
+                if (!sendBtn) return false;
 
-                // 4. Now confirm a response with actual content exists
-                const msgs = document.querySelectorAll('.markdown-prose, .chat-assistant');
-                if (msgs.length === 0) return false;
-                const lastMsg = msgs[msgs.length - 1].innerText?.trim() || '';
-                // Make sure it's real content, not just "Thought Process" placeholder
+                // Verify new response has meaningful content
+                const lastMsg = currentMsgs[currentMsgs.length - 1].innerText?.trim() || '';
                 return lastMsg.length > 20 && !lastMsg.startsWith('Thinking');
             },
             getResponse: () => {
