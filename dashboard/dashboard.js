@@ -1725,20 +1725,32 @@ setInterval(() => {
     }
 }, 60000); // Check every minute
 
-function suspendPanel(panelKey) {
+async function suspendPanel(panelKey) {
     const panel = iframePanels[panelKey];
     if (!panel || panel.suspended || panel.failed) return;
 
+    // Fetch the REAL current URL from webNavigation before suspending
+    try {
+        const frames = await chrome.webNavigation.getAllFrames({ tabId: currentTabId });
+        if (frames && panel.frameId) {
+            const currentFrame = frames.find(f => f.frameId === panel.frameId);
+            if (currentFrame && currentFrame.url && currentFrame.url !== 'about:blank') {
+                panel.currentUrl = currentFrame.url;
+                console.log(`[LLM Council] Captured real URL for ${panelKey}: ${currentFrame.url}`);
+            }
+        }
+    } catch (e) {
+        console.warn(`[LLM Council] Could not get current URL for ${panelKey}:`, e);
+    }
+
     panel.suspended = true;
-    // Save the current navigated URL (not iframe.src which may be stale)
-    // panel.currentUrl is kept up-to-date by discoverFrameIds
     panel.lastUrl = panel.currentUrl || panel.url;
     panel.iframe.src = 'about:blank'; // Free memory
 
     document.getElementById(`iframe-${panelKey}`).style.display = 'none';
     document.getElementById(`suspended-${panelKey}`).classList.remove('hidden');
     updatePanelStatus(panelKey, '💤 Suspended');
-    console.log(`[LLM Council] Suspended panel ${panelKey} to save RAM.`);
+    console.log(`[LLM Council] Suspended panel ${panelKey}. Saved URL: ${panel.lastUrl}`);
 }
 
 function wakePanel(panelKey) {
@@ -1747,14 +1759,28 @@ function wakePanel(panelKey) {
 
     panel.suspended = false;
     panel.lastActive = Date.now();
+    panel.frameId = null; // Old frameId is invalidated by about:blank
+
     // Restore the saved URL (same chat) instead of the base URL
-    panel.iframe.src = panel.lastUrl || panel.url;
+    const restoreUrl = panel.lastUrl || panel.url;
+    panel.iframe.src = restoreUrl;
 
     document.getElementById(`iframe-${panelKey}`).style.display = 'block';
     document.getElementById(`suspended-${panelKey}`).classList.add('hidden');
     updatePanelStatus(panelKey, 'Loading...');
-    showLoading(panelKey);
-    console.log(`[LLM Council] Waking panel ${panelKey}...`);
+    console.log(`[LLM Council] Waking panel ${panelKey} with URL: ${restoreUrl}`);
+
+    // Re-discover frame ID once the iframe finishes loading
+    panel.iframe.addEventListener('load', async () => {
+        setTimeout(async () => {
+            await discoverFrameIds();
+            if (iframePanels[panelKey]?.frameId) {
+                updatePanelStatus(panelKey, '🟢 Connected');
+            } else {
+                updatePanelStatus(panelKey, '🟢 Ready');
+            }
+        }, 1500);
+    }, { once: true });
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
