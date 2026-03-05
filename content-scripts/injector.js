@@ -553,35 +553,8 @@
                 const msgs = document.querySelectorAll('[class*="Markdown_markdownContainer"]');
                 return msgs.length ? msgs[msgs.length - 1].innerText.trim() : '';
             }
-        },
-
-        zai: {
-            match: () => /(chat\.)?z\.ai/.test(location.hostname),
-            getInput: () => document.querySelector('textarea') || document.querySelector('div[contenteditable="true"]'),
-            setPrompt: (el, text) => {
-                el.focus();
-                if (el.tagName === 'TEXTAREA') {
-                    setNativeValue(el, text);
-                } else {
-                    el.innerHTML = `<p>${text}</p>`;
-                    el.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-            },
-            submit: () => {
-                const btn = document.querySelector('button[aria-label*="Send"]') || document.querySelector('.send-button') || document.querySelector('button[type="submit"]');
-                if (isButtonReady(btn)) { btn.click(); return true; }
-                return false;
-            },
-            isComplete: () => {
-                return document.querySelectorAll('.markdown-body, .prose, [class*="message"]').length > 0;
-            },
-            getResponse: () => {
-                const msgs = document.querySelectorAll('.markdown-body, .prose, [class*="message"]');
-                return msgs.length ? msgs[msgs.length - 1].innerText.trim() : '';
-            }
         }
     };
-
     // ── Utility ──────────────────────────────────────────────────────────────
 
     function base64ToFile(dataUrl, filename, mimeType) {
