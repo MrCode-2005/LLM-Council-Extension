@@ -200,16 +200,18 @@ function renderContent(data) {
 
             const blockRect = block.getBoundingClientRect();
 
-            // Filter out hidden images (unchecked, display:none)
-            // Hidden elements return getBoundingClientRect() = {0,0,0,0}
-            const visiblePairs = cbPairs.filter(pair => {
-                const isHidden = pair.img.style.display === 'none' || pair.img.offsetParent === null;
+            // Separate visible and hidden image pairs
+            const visiblePairs = [];
+            const hiddenPairs = [];
+            cbPairs.forEach(pair => {
+                const isHidden = pair.img.style.display === 'none';
+                // Always keep checkboxes visible so user can re-check
+                pair.cb.style.display = '';
                 if (isHidden) {
-                    pair.cb.style.display = 'none';
+                    hiddenPairs.push(pair);
                 } else {
-                    pair.cb.style.display = '';
+                    visiblePairs.push(pair);
                 }
-                return !isHidden;
             });
 
             // Get top positions for visible images only
@@ -226,6 +228,7 @@ function renderContent(data) {
             positions.sort((a, b) => a.imgTop - b.imgTop);
             let currentRowTop = -Infinity;
             let rowIndex = 0;
+            let lastTop = 0;
 
             positions.forEach(pos => {
                 if (Math.abs(pos.imgTop - currentRowTop) > 20) {
@@ -237,7 +240,13 @@ function renderContent(data) {
                 // Stack checkboxes vertically: start at the row's top, offset by 26px per checkbox
                 const top = pos.imgTop + (rowIndex * 26);
                 pos.cb.style.top = top + 'px';
+                lastTop = top;
                 rowIndex++;
+            });
+
+            // Position unchecked (hidden) image checkboxes below the last visible one
+            hiddenPairs.forEach((pair, i) => {
+                pair.cb.style.top = (lastTop + ((i + 1) * 26)) + 'px';
             });
         };
 
