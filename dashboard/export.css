@@ -1074,12 +1074,13 @@ body.width-full .export-document {
 /* Print Styles */
 @media print {
     body {
-        background-color: #f5f0e8 !important;
+        background-color: var(--bg-main) !important;
         padding: 0;
         margin: 0;
         color: var(--text-primary) !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        color-adjust: exact !important;
     }
 
     .no-print {
@@ -1087,9 +1088,9 @@ body.width-full .export-document {
     }
 
     .export-container {
-        padding: 20px;
+        padding: 0;
         width: 100%;
-        background-color: #f5f0e8 !important;
+        background-color: var(--bg-main) !important;
     }
 
     .export-document {
@@ -1123,6 +1124,18 @@ body.width-full .export-document {
 
     .vibe-user-req {
         margin-left: 0;
+    }
+
+    /* Force background colors in print for themed elements */
+    .vibe-prompt-bubble {
+        background: var(--bg-card) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .rich-content pre {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }
 

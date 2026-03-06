@@ -608,12 +608,14 @@ function setupDockInteractions(data) {
                 }));
 
                 try {
+                    const exportDocStyle = getComputedStyle(exportDoc);
+                    const bgColor = exportDocStyle.getPropertyValue('--bg-main').trim() || exportDocStyle.getPropertyValue('--bg-card').trim() || '#ffffff';
                     const canvas = await html2canvas(exportDoc, {
                         scale: 2,
                         useCORS: true,
                         allowTaint: true,
                         logging: false,
-                        backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-card')
+                        backgroundColor: bgColor
                     });
 
                     const link = document.createElement('a');
@@ -674,12 +676,14 @@ function setupDockInteractions(data) {
                         }
                     }));
 
+                    const exportDocStyle = getComputedStyle(exportDoc);
+                    const bgColor = exportDocStyle.getPropertyValue('--bg-main').trim() || exportDocStyle.getPropertyValue('--bg-card').trim() || '#ffffff';
                     const canvas = await html2canvas(exportDoc, {
                         scale: 2,
                         useCORS: true,
                         allowTaint: true,
                         logging: false,
-                        backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-card')
+                        backgroundColor: bgColor
                     });
 
                     // Restore original sources
