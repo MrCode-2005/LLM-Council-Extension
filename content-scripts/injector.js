@@ -1313,6 +1313,22 @@
         };
     }
 
+    function showRefreshBanner() {
+        if (document.getElementById('llm-council-refresh-banner')) return;
+        const banner = document.createElement('div');
+        banner.id = 'llm-council-refresh-banner';
+        banner.innerHTML = `
+            <div style="position:fixed;top:0;left:0;right:0;z-index:2147483647;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.3);animation:llmSlideDown .3s ease-out">
+                <span style="font-size:18px">🔄</span>
+                <span><strong>LLM Council</strong> was just updated. Please <strong>refresh this page</strong> to continue using Export & Ask Council.</span>
+                <button onclick="location.reload()" style="background:#fff;color:#4f46e5;border:none;padding:6px 16px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;white-space:nowrap">Refresh Now</button>
+                <button onclick="this.closest('#llm-council-refresh-banner').remove()" style="background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff;padding:6px 12px;border-radius:6px;font-weight:500;cursor:pointer;font-size:13px">Dismiss</button>
+            </div>
+            <style>@keyframes llmSlideDown{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}</style>
+        `;
+        document.body.appendChild(banner);
+    }
+
     function injectQuickCompareButtons() {
         try {
             const adapter = getAdapter();
@@ -1353,7 +1369,11 @@
                     btn.addEventListener('click', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        chrome.runtime.sendMessage({ action: 'open_dashboard', prompt: promptText });
+                        try {
+                            chrome.runtime.sendMessage({ action: 'open_dashboard', prompt: promptText });
+                        } catch (err) {
+                            showRefreshBanner();
+                        }
                     });
 
                     if (councilPrefs.position === 'side') {
@@ -1394,8 +1414,7 @@
                             const chatData = captureEntireChat(adapter);
                             chrome.runtime.sendMessage({ action: 'open_export', data: chatData });
                         } catch (err) {
-                            console.warn('LLM Council: Extension context invalidated, please refresh the page.', err);
-                            alert('Extension was updated. Please refresh this page and try again.');
+                            showRefreshBanner();
                         }
                     });
 
