@@ -200,53 +200,23 @@ function renderContent(data) {
 
             const blockRect = block.getBoundingClientRect();
 
-            // Separate visible and hidden image pairs
-            const visiblePairs = [];
-            const hiddenPairs = [];
-            cbPairs.forEach(pair => {
-                const isHidden = pair.img.style.display === 'none';
-                // Always keep checkboxes visible so user can re-check
+            // Find the top of the first visible image to anchor all checkboxes
+            let anchorTop = 0;
+            for (const pair of cbPairs) {
+                if (pair.img.style.display !== 'none') {
+                    const imgRect = pair.img.getBoundingClientRect();
+                    if (imgRect.height > 0) {
+                        anchorTop = imgRect.top - blockRect.top;
+                        break;
+                    }
+                }
+            }
+
+            // Stack all checkboxes vertically from the anchor, in original order
+            // This keeps them within the block and avoids overflow into adjacent blocks
+            cbPairs.forEach((pair, i) => {
                 pair.cb.style.display = '';
-                if (isHidden) {
-                    hiddenPairs.push(pair);
-                } else {
-                    visiblePairs.push(pair);
-                }
-            });
-
-            // Get top positions for visible images only
-            const positions = visiblePairs.map(pair => {
-                const imgRect = pair.img.getBoundingClientRect();
-                return {
-                    ...pair,
-                    imgTop: imgRect.top - blockRect.top,
-                    imgHeight: imgRect.height
-                };
-            });
-
-            // Group images by approximate same top (within 20px = same row)
-            positions.sort((a, b) => a.imgTop - b.imgTop);
-            let currentRowTop = -Infinity;
-            let rowIndex = 0;
-            let lastTop = 0;
-
-            positions.forEach(pos => {
-                if (Math.abs(pos.imgTop - currentRowTop) > 20) {
-                    // New row
-                    currentRowTop = pos.imgTop;
-                    rowIndex = 0;
-                }
-
-                // Stack checkboxes vertically: start at the row's top, offset by 26px per checkbox
-                const top = pos.imgTop + (rowIndex * 26);
-                pos.cb.style.top = top + 'px';
-                lastTop = top;
-                rowIndex++;
-            });
-
-            // Position unchecked (hidden) image checkboxes below the last visible one
-            hiddenPairs.forEach((pair, i) => {
-                pair.cb.style.top = (lastTop + ((i + 1) * 26)) + 'px';
+                pair.cb.style.top = (anchorTop + (i * 26)) + 'px';
             });
         };
 
