@@ -329,8 +329,15 @@ function setupToolbar() {
             target.classList.add('active');
 
             const docWrapper = document.getElementById('export-document');
+            const dock = document.getElementById('floating-dock');
+            const themeClass = `theme-${target.dataset.theme}`;
+
             docWrapper.classList.remove('theme-light', 'theme-dark', 'theme-note');
-            docWrapper.classList.add(`theme-${target.dataset.theme}`);
+            docWrapper.classList.add(themeClass);
+
+            // Also apply theme to the dock so it inherits the theme variables
+            dock.classList.remove('theme-light', 'theme-dark', 'theme-note');
+            dock.classList.add(themeClass);
         });
     });
 
