@@ -981,8 +981,19 @@ function setupEventListeners() {
                 }
             }
 
-            // Save and open
-            await chrome.storage.local.set({ 'council_export_data': exportData });
+            // Save and open (chunked to avoid QUOTA_BYTES_PER_ITEM limit)
+            const jsonStr = JSON.stringify(exportData);
+            const CHUNK_SIZE = 4000;
+            const chunks = [];
+            for (let i = 0; i < jsonStr.length; i += CHUNK_SIZE) {
+                chunks.push(jsonStr.substring(i, i + CHUNK_SIZE));
+            }
+            const oldKeys = await chrome.storage.local.get(null);
+            const keysToRemove = Object.keys(oldKeys).filter(k => k.startsWith('council_export_chunk_'));
+            if (keysToRemove.length) await chrome.storage.local.remove(keysToRemove);
+            const storageObj = { 'council_export_chunk_count': chunks.length };
+            chunks.forEach((chunk, i) => { storageObj[`council_export_chunk_${i}`] = chunk; });
+            await chrome.storage.local.set(storageObj);
             chrome.tabs.create({ url: 'dashboard/export.html' });
 
             // Restore button

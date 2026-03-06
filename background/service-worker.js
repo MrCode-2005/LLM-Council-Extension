@@ -163,7 +163,21 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
     if (message.action === 'open_export') {
         if (message.data) {
-            await chrome.storage.local.set({ 'council_export_data': message.data });
+            // Chunk the data to avoid QUOTA_BYTES_PER_ITEM limit
+            const jsonStr = JSON.stringify(message.data);
+            const CHUNK_SIZE = 4000; // ~4KB per chunk (safe under 8KB limit)
+            const chunks = [];
+            for (let i = 0; i < jsonStr.length; i += CHUNK_SIZE) {
+                chunks.push(jsonStr.substring(i, i + CHUNK_SIZE));
+            }
+            // Clear old chunks first
+            const oldKeys = await chrome.storage.local.get(null);
+            const keysToRemove = Object.keys(oldKeys).filter(k => k.startsWith('council_export_chunk_'));
+            if (keysToRemove.length) await chrome.storage.local.remove(keysToRemove);
+            // Write new chunks + count
+            const storageObj = { 'council_export_chunk_count': chunks.length };
+            chunks.forEach((chunk, i) => { storageObj[`council_export_chunk_${i}`] = chunk; });
+            await chrome.storage.local.set(storageObj);
         }
 
         const exportUrl = chrome.runtime.getURL('dashboard/export.html');

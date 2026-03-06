@@ -16,9 +16,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         b.classList.toggle('active', b.dataset.theme === 'light');
     });
 
-    // 1. Get Data from storage
-    const dataObj = await chrome.storage.local.get('council_export_data');
-    const data = dataObj.council_export_data;
+    // 1. Get Data from storage (chunked to handle large data)
+    let data;
+    const meta = await chrome.storage.local.get('council_export_chunk_count');
+    if (meta.council_export_chunk_count) {
+        const count = meta.council_export_chunk_count;
+        const keys = [];
+        for (let i = 0; i < count; i++) keys.push(`council_export_chunk_${i}`);
+        const chunks = await chrome.storage.local.get(keys);
+        let jsonStr = '';
+        for (let i = 0; i < count; i++) jsonStr += (chunks[`council_export_chunk_${i}`] || '');
+        try { data = JSON.parse(jsonStr); } catch (e) { data = null; }
+    } else {
+        // Backward compat: try old single-key format
+        const dataObj = await chrome.storage.local.get('council_export_data');
+        data = dataObj.council_export_data;
+    }
 
     if (!data) {
         document.getElementById('responses-vibe').innerHTML = `
