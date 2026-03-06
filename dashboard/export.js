@@ -173,6 +173,8 @@ function renderContent(data) {
 
             cb.addEventListener('change', () => {
                 img.style.display = cb.checked ? '' : 'none';
+                // Reposition checkboxes after hiding/showing an image
+                requestAnimationFrame(positionAll);
             });
 
             return { img, cb };
@@ -180,9 +182,25 @@ function renderContent(data) {
 
         // Position all checkboxes after images have loaded
         const positionAll = () => {
+            // Don't reposition during export (src swaps trigger load events)
+            if (window.__exportInProgress) return;
+
             const blockRect = block.getBoundingClientRect();
-            // Get top positions for all images
-            const positions = cbPairs.map(pair => {
+
+            // Filter out hidden images (unchecked, display:none)
+            // Hidden elements return getBoundingClientRect() = {0,0,0,0}
+            const visiblePairs = cbPairs.filter(pair => {
+                const isHidden = pair.img.style.display === 'none' || pair.img.offsetParent === null;
+                if (isHidden) {
+                    pair.cb.style.display = 'none';
+                } else {
+                    pair.cb.style.display = '';
+                }
+                return !isHidden;
+            });
+
+            // Get top positions for visible images only
+            const positions = visiblePairs.map(pair => {
                 const imgRect = pair.img.getBoundingClientRect();
                 return {
                     ...pair,
@@ -595,6 +613,7 @@ function setupDockInteractions(data) {
 
                 const dock = document.getElementById('floating-dock');
                 dock.style.display = 'none'; // hide dock temporarily
+                window.__exportInProgress = true; // Block checkbox repositioning
 
                 // Pre-convert cross-origin images to data URLs via service worker (bypasses CORS)
                 const exportDoc = document.getElementById('export-document');
@@ -637,6 +656,7 @@ function setupDockInteractions(data) {
                     imgs.forEach((img, idx) => {
                         if (originalSrcs[idx]) img.src = originalSrcs[idx];
                     });
+                    window.__exportInProgress = false;
                     dock.style.display = 'flex'; // restore dock
                 }
 
@@ -665,6 +685,7 @@ function setupDockInteractions(data) {
                     }
                     const dock = document.getElementById('floating-dock');
                     dock.style.display = 'none';
+                    window.__exportInProgress = true; // Block checkbox repositioning
 
                     // Pre-convert images to data URLs via service worker
                     const exportDoc = document.getElementById('export-document');
@@ -697,6 +718,7 @@ function setupDockInteractions(data) {
                     imgs.forEach((img, idx) => {
                         if (originalSrcs[idx]) img.src = originalSrcs[idx];
                     });
+                    window.__exportInProgress = false;
                     dock.style.display = 'flex';
 
                     canvas.toBlob(async (blob) => {
