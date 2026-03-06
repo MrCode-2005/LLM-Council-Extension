@@ -1098,8 +1098,25 @@ body.width-full .export-document {
         border: none;
         padding: 30px;
         margin: 0 auto;
+        width: 100%;
         background-color: var(--bg-main) !important;
         border-radius: 0;
+        /* Preserve font-size and font-family from document settings */
+        font-size: var(--doc-fz) !important;
+        font-family: var(--doc-font) !important;
+    }
+
+    /* Preserve width settings in print */
+    body.width-narrow .export-document {
+        max-width: 680px !important;
+    }
+
+    body.width-medium .export-document {
+        max-width: 850px !important;
+    }
+
+    body.width-full .export-document {
+        max-width: 1100px !important;
     }
 
     .vibe-block.selected {
@@ -1136,6 +1153,25 @@ body.width-full .export-document {
     .rich-content pre {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+    }
+
+    /* Preserve font size classes in print */
+    .export-document.fz-small {
+        --doc-fz: 13px !important;
+    }
+
+    .export-document.fz-medium {
+        --doc-fz: 15px !important;
+    }
+
+    .export-document.fz-large {
+        --doc-fz: 18px !important;
+    }
+
+    .vibe-content,
+    .vibe-prompt-bubble {
+        font-size: var(--doc-fz) !important;
+        font-family: var(--doc-font) !important;
     }
 }
 

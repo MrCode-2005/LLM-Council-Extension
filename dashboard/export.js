@@ -753,8 +753,11 @@ function generateTextExport(data, format) {
         const computedStyle = getComputedStyle(docEl);
         const fontSize = computedStyle.fontSize || '15px';
         const fontFamily = computedStyle.fontFamily || 'Roboto, sans-serif';
+        const maxWidth = computedStyle.maxWidth || '850px';
+        const bgColor = computedStyle.getPropertyValue('--bg-main').trim() || computedStyle.backgroundColor || '#ffffff';
+        const textColor = computedStyle.getPropertyValue('--text-primary').trim() || computedStyle.color || '#1a1a1a';
         const imagesHidden = docEl.classList.contains('hide-images');
-        output += `<!DOCTYPE html>\n<html>\n<head><meta charset="utf-8"><title>Export</title><style>img { max-width: 31%; height: auto; border-radius: 8px; vertical-align: top; margin: 4px; } pre { background: #1e1e2e; color: #cdd6f4; padding: 16px; border-radius: 8px; overflow-x: auto; } code { font-family: 'Fira Code', 'Consolas', monospace; }</style></head>\n<body style="font-size: ${fontSize}; font-family: ${fontFamily}; line-height: 1.7; max-width: 850px; margin: 0 auto; padding: 40px;">\n`;
+        output += `<!DOCTYPE html>\n<html>\n<head><meta charset="utf-8"><title>Export</title><style>body { font-size: ${fontSize}; font-family: ${fontFamily}; line-height: 1.7; max-width: ${maxWidth}; margin: 0 auto; padding: 40px; background-color: ${bgColor}; color: ${textColor}; } img { max-width: 31%; height: auto; border-radius: 8px; vertical-align: top; margin: 4px; } pre { background: #1e1e2e; color: #cdd6f4; padding: 16px; border-radius: 8px; overflow-x: auto; } code { font-family: 'Fira Code', 'Consolas', monospace; }</style></head>\n<body>\n`;
     } else if (format === 'md') {
         output += `# ${data.chatTitle || 'LLM Council Export'}\n\n`;
     }
