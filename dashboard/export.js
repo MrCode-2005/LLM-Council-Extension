@@ -589,41 +589,21 @@ function setupDockInteractions(data) {
                 const dock = document.getElementById('floating-dock');
                 dock.style.display = 'none'; // hide dock temporarily
 
-                // Pre-convert cross-origin images to data URLs
+                // Pre-convert cross-origin images to data URLs via service worker (bypasses CORS)
                 const exportDoc = document.getElementById('export-document');
                 const imgs = exportDoc.querySelectorAll('img');
                 const originalSrcs = [];
 
                 await Promise.all(Array.from(imgs).map(async (img, idx) => {
                     originalSrcs[idx] = img.src;
-                    if (!img.src || img.src.startsWith('data:')) return;
+                    if (!img.src || img.src.startsWith('data:') || img.src.startsWith('chrome-extension://')) return;
                     try {
-                        const response = await fetch(img.src, { mode: 'cors' });
-                        const blob = await response.blob();
-                        const dataUrl = await new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onloadend = () => resolve(reader.result);
-                            reader.readAsDataURL(blob);
-                        });
-                        img.src = dataUrl;
-                    } catch (e) {
-                        // If fetch fails, try canvas approach
-                        try {
-                            const cvs = document.createElement('canvas');
-                            const newImg = new Image();
-                            newImg.crossOrigin = 'anonymous';
-                            await new Promise((resolve, reject) => {
-                                newImg.onload = resolve;
-                                newImg.onerror = reject;
-                                newImg.src = img.src;
-                            });
-                            cvs.width = newImg.naturalWidth;
-                            cvs.height = newImg.naturalHeight;
-                            cvs.getContext('2d').drawImage(newImg, 0, 0);
-                            img.src = cvs.toDataURL('image/png');
-                        } catch (e2) {
-                            // Skip images that can't be converted
+                        const result = await chrome.runtime.sendMessage({ action: 'fetch_image', url: img.src });
+                        if (result && result.success && result.dataUrl) {
+                            img.src = result.dataUrl;
                         }
+                    } catch (e) {
+                        console.warn('Failed to convert image:', img.src, e);
                     }
                 }));
 
@@ -677,37 +657,20 @@ function setupDockInteractions(data) {
                     const dock = document.getElementById('floating-dock');
                     dock.style.display = 'none';
 
-                    // Pre-convert images to data URLs
+                    // Pre-convert images to data URLs via service worker
                     const exportDoc = document.getElementById('export-document');
                     const imgs = exportDoc.querySelectorAll('img');
                     const originalSrcs = [];
                     await Promise.all(Array.from(imgs).map(async (img, idx) => {
                         originalSrcs[idx] = img.src;
-                        if (!img.src || img.src.startsWith('data:')) return;
+                        if (!img.src || img.src.startsWith('data:') || img.src.startsWith('chrome-extension://')) return;
                         try {
-                            const response = await fetch(img.src, { mode: 'cors' });
-                            const blob = await response.blob();
-                            const dataUrl = await new Promise((resolve) => {
-                                const reader = new FileReader();
-                                reader.onloadend = () => resolve(reader.result);
-                                reader.readAsDataURL(blob);
-                            });
-                            img.src = dataUrl;
+                            const result = await chrome.runtime.sendMessage({ action: 'fetch_image', url: img.src });
+                            if (result && result.success && result.dataUrl) {
+                                img.src = result.dataUrl;
+                            }
                         } catch (e) {
-                            try {
-                                const cvs = document.createElement('canvas');
-                                const newImg = new Image();
-                                newImg.crossOrigin = 'anonymous';
-                                await new Promise((resolve, reject) => {
-                                    newImg.onload = resolve;
-                                    newImg.onerror = reject;
-                                    newImg.src = img.src;
-                                });
-                                cvs.width = newImg.naturalWidth;
-                                cvs.height = newImg.naturalHeight;
-                                cvs.getContext('2d').drawImage(newImg, 0, 0);
-                                img.src = cvs.toDataURL('image/png');
-                            } catch (e2) { /* skip */ }
+                            console.warn('Failed to convert image:', img.src, e);
                         }
                     }));
 

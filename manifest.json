@@ -15,6 +15,7 @@
     "webNavigation"
   ],
   "host_permissions": [
+    "<all_urls>",
     "https://chat.openai.com/*",
     "https://chatgpt.com/*",
     "https://gemini.google.com/*",

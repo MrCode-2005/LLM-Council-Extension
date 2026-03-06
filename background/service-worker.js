@@ -117,3 +117,22 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         }
     }
 });
+
+// ── Image Proxy for Export (bypasses CORS) ────────────────────────────────────
+// MUST be a separate, non-async listener so `return true` works synchronously
+// to keep the sendResponse channel open.
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'fetch_image') {
+        fetch(message.url)
+            .then(response => response.blob())
+            .then(blob => {
+                const reader = new FileReader();
+                reader.onloadend = () => sendResponse({ success: true, dataUrl: reader.result });
+                reader.readAsDataURL(blob);
+            })
+            .catch(e => {
+                sendResponse({ success: false, error: e.message });
+            });
+        return true; // Keeps the message channel open for async sendResponse
+    }
+});
