@@ -56,6 +56,7 @@ let expandBtn = null;    // floating expand button
 // ── Initialize ───────────────────────────────────────────────────────────────
 
 async function init() {
+    await migrateFromSyncToLocal();
     await loadConfig();
     currentTabId = await getCurrentTabId();
 
@@ -110,7 +111,7 @@ async function getCurrentTabId() {
 }
 
 async function loadConfig() {
-    const c = await chrome.storage.sync.get([
+    const c = await chrome.storage.local.get([
         STORAGE_KEYS.SELECTED_COUNCIL,
         STORAGE_KEYS.SELECTED_JUDGE,
         STORAGE_KEYS.JUDGE_CUSTOM_PROMPT
@@ -121,11 +122,28 @@ async function loadConfig() {
 }
 
 async function saveConfig() {
-    await chrome.storage.sync.set({
+    await chrome.storage.local.set({
         [STORAGE_KEYS.SELECTED_COUNCIL]: [...selectedCouncil],
         [STORAGE_KEYS.SELECTED_JUDGE]: selectedJudge,
         [STORAGE_KEYS.JUDGE_CUSTOM_PROMPT]: customJudgePrompt,
     });
+}
+
+// One-time migration: copy data from chrome.storage.sync to chrome.storage.local
+async function migrateFromSyncToLocal() {
+    try {
+        const migrated = await chrome.storage.local.get('__sync_migrated');
+        if (migrated.__sync_migrated) return; // Already migrated
+
+        const syncData = await chrome.storage.sync.get(null);
+        if (syncData && Object.keys(syncData).length > 0) {
+            await chrome.storage.local.set(syncData);
+            console.log('[LLM Council] Migrated sync data to local storage:', Object.keys(syncData));
+        }
+        await chrome.storage.local.set({ __sync_migrated: true });
+    } catch (e) {
+        console.warn('[LLM Council] Sync migration failed (non-critical):', e);
+    }
 }
 
 // ── Judge Prompt UI ──────────────────────────────────────────────────────────
@@ -306,7 +324,7 @@ function setupTemplatesManager() {
     const inputContent = document.getElementById('template-content');
 
     const loadTemplates = async () => {
-        const data = await chrome.storage.sync.get('llm_prompt_templates');
+        const data = await chrome.storage.local.get('llm_prompt_templates');
         promptTemplates = data.llm_prompt_templates || [];
         promptTemplates.sort((a, b) => a.order - b.order);
         renderTemplatesSettings();
@@ -315,7 +333,7 @@ function setupTemplatesManager() {
 
     const saveTemplates = async () => {
         promptTemplates.sort((a, b) => a.order - b.order);
-        await chrome.storage.sync.set({ llm_prompt_templates: promptTemplates });
+        await chrome.storage.local.set({ llm_prompt_templates: promptTemplates });
         renderTemplatesSettings();
         window.dispatchEvent(new Event('templates-loaded'));
     };
@@ -542,10 +560,9 @@ function setupWebDavSync() {
 
         try {
             // Gather all config from sync and local
-            const syncData = await chrome.storage.sync.get(null);
-            const localData = await chrome.storage.local.get(['LLM_COUNCIL_CONFIG']); // Only sync specific local bits if needed
+            const localData = await chrome.storage.local.get(null);
 
-            const payload = JSON.stringify({ sync: syncData, local: localData }, null, 2);
+            const payload = JSON.stringify({ local: localData }, null, 2);
 
             // Assuming WebDAV server creates/overwrites file at URL
             const targetUrl = config.url.endsWith('/') ? `${config.url}llm-council-sync.json` : `${config.url}/llm-council-sync.json`;
@@ -601,7 +618,8 @@ function setupWebDavSync() {
 
             const data = await res.json();
 
-            if (data.sync) await chrome.storage.sync.set(data.sync);
+            // Support both old format (sync+local) and new format (local only)
+            if (data.sync) await chrome.storage.local.set(data.sync);
             if (data.local) await chrome.storage.local.set(data.local);
 
             setStatus('Restored successfully! ✓', '#22c55e');
@@ -1130,7 +1148,7 @@ async function handleSubmit() {
     if (councilIds.length < DEFAULTS.MIN_COUNCIL) return;
 
     // Save prompt text for next time
-    chrome.storage.sync.set({ [STORAGE_KEYS.LAST_PROMPT]: prompt });
+    chrome.storage.local.set({ [STORAGE_KEYS.LAST_PROMPT]: prompt });
 
     // Save to history
     if (typeof addToHistory === 'function') {
@@ -2136,7 +2154,7 @@ let promptHistory = [];
 
 async function loadHistory() {
     try {
-        const data = await chrome.storage.sync.get(STORAGE_KEYS.HISTORY);
+        const data = await chrome.storage.local.get(STORAGE_KEYS.HISTORY);
         promptHistory = data[STORAGE_KEYS.HISTORY] || [];
         renderHistory();
     } catch (e) { console.error("Could not load history", e); }
@@ -2152,20 +2170,20 @@ async function addToHistory(prompt, modelsUsed) {
     // Keep max 100 items
     if (promptHistory.length > 100) promptHistory.pop();
 
-    await chrome.storage.sync.set({ [STORAGE_KEYS.HISTORY]: promptHistory });
+    await chrome.storage.local.set({ [STORAGE_KEYS.HISTORY]: promptHistory });
     renderHistory();
 }
 
 async function deleteHistoryItem(id) {
     promptHistory = promptHistory.filter(item => item.id !== id);
-    await chrome.storage.sync.set({ [STORAGE_KEYS.HISTORY]: promptHistory });
+    await chrome.storage.local.set({ [STORAGE_KEYS.HISTORY]: promptHistory });
     renderHistory();
 }
 
 async function clearHistory() {
     if (!confirm('Are you sure you want to clear your entire prompt history?')) return;
     promptHistory = [];
-    await chrome.storage.sync.set({ [STORAGE_KEYS.HISTORY]: promptHistory });
+    await chrome.storage.local.set({ [STORAGE_KEYS.HISTORY]: promptHistory });
     renderHistory();
 }
 
